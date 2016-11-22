@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>canvas</title>
+  <style>
+#canvasPic{
+  overflow:hidden;
+	position:absolute;
+	top: 50%;
+	left: 50%;
+  /* background:rgba(0,0,0,0.1); */
+}
+.control-label{
+	text-align: right;
+}
+.form-group{
+	background: rgba(0,0,0,0.1);
+	padding: 10px;
+	box-sizing: border-box;
+}
+.form-group [class|=col-lg]{
+	display: inline-block;
+	padding: 5px;
+	margin: 10px 0;
+}
+.form-group .col-lg-1{
+	width: 8.33%;
+}
+.form-group .col-lg-2{
+	width: 16.66%;
+}
+.form-group .col-lg-3{
+	width: 24.99%;
+}
+.form-group .col-lg-4{
+	width: 33.33%;
+}
+.form-group .col-lg-5{
+	width: 41.66%;
+}
+.form-group .col-lg-6{
+	width: 49.99%;
+}
+.form-group .col-lg-7{
+	width: 58.33%;
+}
+.form-group .col-lg-8{
+	width: 66.66%;
+}
+.form-group .col-lg-9{
+	width: 74.99%;
+}
+.form-group .col-lg-10{
+	width: 83.33%;
+}
+.form-group .col-lg-11{
+	width: 91.66%;
+}
+.form-group .col-lg-12{
+	width: 99.99%;
+}
+
+  </style>
+</head>
+<body>
+<form id="config-form" class="form-group" style="width: 800px;margin: 10px auto;">
+	<label class="col-lg-2 control-label">颜色：</label>
+	<input class="col-lg-3" id="frontColor"></input>
+	<label class="col-lg-2 control-label">线宽：</label>
+	<input class="col-lg-3" id="lineWidth"></input>
+	<label class="col-lg-2 control-label">宽：</label>
+	<input class="col-lg-3" id="width"></input>
+	<label class="col-lg-2 control-label">高：</label>
+	<input class="col-lg-3" id="height"></input>
+</form>
+<a href="javascript:circleCheck();">正确</a>
+<a href="javascript:circleError();">错误</a>
+<canvas id="canvasPic" width="500px" height="500px"></canvas>
+<script type="text/javascript">
+var canvas=document.getElementById("canvasPic");
+function circleCheck(){
+	drawCircleCheck(canvas,{
+		lineColor : "rgba(18,157,110,1)", // line color, the default value is rgba(18,157,110,1),
+		lineWidth : 8, // the bigger the number is , the wider the line is, the default value is 8.
+		canvasWidth : "152", // number string only, no unit allowed, default unit is "px".
+		canvasHeight : "152", // it's better to be the same with argument "canvasWidth".
+		speed : "normal", // "slow", "fast", "normal" or just number.
+		marginLeft : "-76px", // canvas positioning left margin, number string with unit "px", the default value is "0".
+		marginTop : "-76px" // canvas positioning top margin, number string with unit "px", the default value is "0".
+	});
+}
+
+function circleError(){
+var frontColor = document.getElementById("frontColor").value;
+var lineWidth = document.getElementById("lineWidth").value;
+var width = document.getElementById("width").value;
+var height = document.getElementById("height").value;
+if(lineWidth == "")
+{
+	alert("lineWidth为空。");
+	return false;
+} 
+	drawCircleErroe(canvas,{
+		lineColor : frontColor,
+		lineWidth : lineWidth,
+		canvasWidth : width,
+		canvasHeight : height,
+      //lineColor : "rgba(227,48,48,1)",
+      //lineWidth : 8,
+      //canvasWidth : "152",
+      //canvasHeight : "152",
+      speed : "fast",
+      //marginLeft : "-76px",
+      //marginTop : "-76px"
+    });
+}
+
+function drawCircleCheck(canvas, opt) {
+  canvas.setAttribute("width",opt.canvasWidth);
+  canvas.setAttribute("height",opt.canvasHeight);
+  canvas.style.marginLeft = opt.marginLeft ? opt.marginLeft+[] : "-"+opt.canvasWidth+"px";
+  canvas.style.marginTop =opt.marginTop ? opt.marginTop+[] : "-"+opt.canvasHeight+"px";
+  var x = +canvas.offsetLeft;
+  var y = +canvas.offsetTop;
+  var w = +canvas.offsetWidth;
+  var h = +canvas.offsetHeight;
+  var k = Math.min(opt.canvasWidth,opt.canvasHeight)/202;
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(x,y,w,h);
+  ctx.strokeStyle=opt.lineColor || "rgba(18,157,110,1)"; // if style is checked, this default value is rgba(18,157,110,1); if style is error, this default value is rgba(227,48,48,1);
+  ctx.lineWidth=+opt.lineWidth || 8;
+  ctx.lineCap= "round";
+  ctx.translate(0.5,0.5);
+  speed = (typeof opt.speed =="number" ? opt.speed : ((opt.speed == "slow" && 8) || (opt.speed == "fast" && 3) || (opt.speed == "normal" && 5) || 5)) || 5;
+  var sigma = 0,delt=0;
+  var interval_b = setInterval(function(){
+    sigma++;
+    delt =Math.abs(Math.cos(0.01*sigma));
+    ctx.beginPath();
+	ctx.clearRect(x,y,w,h);
+    ctx.arc(+opt.canvasWidth/2,+opt.canvasHeight/2,(Math.min(+opt.canvasWidth,+opt.canvasHeight)-opt.lineWidth-2)/2,Math.PI+0.01,delt*2*Math.PI-Math.PI,true);
+    if(sigma == 200) 
+      {
+        clearInterval(interval_b);
+        var x1=Math.floor((56*opt.canvasWidth)/202),y1=Math.floor((102*opt.canvasHeight)/202),delt=0;
+        ctx.beginPath();
+        ctx.clearRect(x,y,w,h);
+        var interval_c = setInterval(function(){
+          delt++;
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x1 + delt,y1 + delt);
+          if (delt==Math.floor((36*Math.min(opt.canvasWidth,opt.canvasHeight))/202)) 
+            {
+              clearInterval(interval_c);
+              delt = 0;
+              var interval_d = setInterval(function(){
+                delt++;
+                ctx.lineTo(Math.floor(((92 + 1.77778*delt)*opt.canvasWidth)/202),Math.floor(((138 - 2*delt)*opt.canvasHeight)/202));
+                if (delt==36) 
+                  {
+                    clearInterval(interval_d);
+                  }
+                ctx.stroke();
+              },speed);
+            }
+
+          ctx.lineJoin="round";
+          ctx.stroke();
+          ctx.closePath();
+        },speed);
+      }
+  ctx.stroke();
+  ctx.closePath();
+  },speed);
+}
+
+function drawCircleErroe(canvas, opt){
+  canvas.setAttribute("width",opt.canvasWidth);
+  canvas.setAttribute("height",opt.canvasHeight);
+  canvas.style.marginLeft = opt.marginLeft ? opt.marginLeft+[] : "0";
+  canvas.style.marginTop =opt.marginTop ? opt.marginTop+[] : "0";	
+  var x = +canvas.offsetLeft;
+  var y = +canvas.offsetTop;
+  var w = +canvas.offsetWidth;
+  var h = +canvas.offsetHeight;
+  var k = Math.min(opt.canvasWidth,opt.canvasHeight)/202;
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle=opt.lineColor || "rgba(18,157,110,1)";
+  ctx.lineWidth=+opt.lineWidth || 8;
+  ctx.lineCap= "round";
+  ctx.translate(0.5,0.5);
+  speed = (typeof opt.speed =="number" ? opt.speed : ((opt.speed == "slow" && 8) || (opt.speed == "fast" && 3) || (opt.speed == "normal" && 5) || 5)) || 5;
+  var sigma = 0,delt=0;
+  var interval_d = setInterval(function(){
+    sigma++;
+    delt =Math.abs(Math.cos(0.01*sigma));
+    ctx.beginPath();
+	ctx.clearRect(x,y,w,h);
+    ctx.arc(+opt.canvasWidth/2,+opt.canvasHeight/2,(Math.min(+opt.canvasWidth,+opt.canvasHeight)-opt.lineWidth-2)/2,Math.PI+0.01,delt*2*Math.PI-Math.PI,true);
+    if(sigma == 200) 
+      {
+        clearInterval(interval_d);
+        var x1 =60*k,y1 = 60*k,delt=0;
+        ctx.beginPath();
+        ctx.clearRect(x,y,w,h);
+        ctx.moveTo(x1, y1);
+        var interval_e = setInterval(function(){
+          delt++;
+          ctx.lineTo(x1+k*delt,y1+k*delt);
+          if (delt==80) 
+            {
+              clearInterval(interval_e);
+              delt = 0;
+              var x2 = k*140,y2 = k*60;
+              ctx.moveTo(x2,y2);
+              var interval_f = setInterval(function(){
+                delt++;
+                ctx.lineTo(x2-k*delt, y2+k*delt);
+                if (delt==80) 
+                  {
+                    clearInterval(interval_f);
+                  }
+                ctx.stroke();
+                ctx.closePath();
+              },0.1*speed);
+            }
+
+          ctx.lineJoin="round";
+          ctx.stroke();
+          ctx.closePath();
+        },0.1*speed);
+      }
+  ctx.stroke();
+  ctx.closePath();
+  },speed);
+}
+</script>
+</body>
+</html>
