@@ -1,11 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>hello world</title>
+    <meta charset="UTF-8">
+    <title>file system</title>
+    <link rel="stylesheet" href="style/init.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="js/bmob-min.js"></script>
+    <script src="js/app.js"></script>
 </head>
 <body>
-	Hello world, I'm comming!
-	<a href="canvas_check.html">canvas_check</a>
+    <!-- @ DOM STRUCTURE
+        DOM--
+            |--wraper(God container, it is a view port we made for content showing. It's overflow should be hidden, if you wanna make it like a setted window; overflow-y should be auto, if you wanna make it like a normal content flow.)
+                |--edit-pannel(At right out of the screen. Normally contains article editing module,site info editing module, etc.)
+                |--menu-pannel(At left out of the screen. Contains search box, menu, latest articles, RRS, etc.)
+                |--main-pannel(The main area for content showing.)
+                |--header-pannel(At top out of the screen or in the screen.)
+                |--footer-pannel(At bottom out of or in the screen.)
+                |--util-pannel(Fixed at one side of the screen. Contains some utiles, such as backTop btn.)
+                |--mask-and-pop(Show in some situation, maybe when you login/out, get/write msg, etc.)
+    -->
+    <div id="wrapper">
+        <div id="edit-pannel" class="p10 dn">
+            <input type="text" id="articleTitle" placeholder="文章标题" maxlength="50" />
+            <div id="articleFormatBox">
+                <!--1. 文本样式：1-4级标题，正文-->
+                <select name="textStyle" id="textStyle">
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                    <option value="h4">Heading 4</option>
+                    <option value="p">Paragraph</option>
+                </select>
+                <!--2. 文字颜色-->
+                <div id="textColor" class="dib" title="Text color">
+                    <i class="icon-font"></i>
+                    <i class="icon-caret-down"></i>
+                    <input type="color" class="dn">
+                </div>
+                <!--3. 背景颜色-->
+                <div id="backgroundColor" class="dib" title="Background color">
+                    <i class="icon-font"></i>
+                    <i class="icon-caret-down"></i>
+                    <input type="color" class="dn">
+                </div>
+                <!--4. 文字加粗-->
+                <div id="bold" class="dib" title="Bold">
+                    <i class="icon-bold"></i>
+                </div>
+                <!--5. 文字倾斜-->
+                <div id="italic" class="dib" title="Italic">
+                    <i class="icon-italic"></i>
+                </div>
+                <!--6. 下划线-->
+                <div id="underline" class="dib" title="Underline">
+                    <i class="icon-underline"></i>
+                </div>
+                <!--7. 删除线-->
+                <div id="strikeThrough" class="dib" title="Strike through">
+                    <i class="icon-strikethrough"></i>
+                </div>
+                <!--8. 插入图片-->
+                <div id="insertImage" class="dib" title="Insert image">
+                    <i class="icon-picture"></i>
+                </div>
+                <!--9. 语言-->
+                <select name="codeLanguage" id="codeLanguage">
+                    <option value="">code language</option>
+                    <option value="html">html</option>
+                    <option value="css">CSS</option>
+                    <option value="javascript">javascript</option>
+                    <option value="less">less</option>
+                    <option value="java">java</option>
+                </select>
+                <!--10. 左对齐-->
+                <div id="alignLeft" class="dib" title="Align left">
+                    <i class="icon-align-left"></i>
+                </div>
+                <!--11. 居中对齐-->
+                <div id="alignCenter" class="dib" title="Align center">
+                    <i class="icon-align-center"></i>
+                </div>
+                <!--12. 右对齐-->
+                <div id="alignRight" class="dib" title="Align right">
+                    <i class="icon-align-right"></i>
+                </div>
+                <!--13. 引用-->
+                <div id="blockquote" class="dib" title="Blockquote">
+                    <i class="icon-quote-left"></i>
+                </div>
+                <!--14. 添加/编辑链接-->
+                <div id="addLink" class="dib" title="Add/edit link">
+                    <i class="icon-link"></i>
+                </div>
+                <!--15. 字体-->
+                <select name="fontFamily" id="fontFamily">
+                    <option value="">Font family</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="黑体">黑体</option>
+                    <option value="宋体">宋体</option>
+                </select>
+                <!--16. 字号-->
+                <select name="fontSize" id="fontSize">
+                    <option value="">Font size</option>
+                    <option value="8pt">8pt</option>
+                    <option value="10pt">10pt</option>
+                    <option value="12pt">12pt</option>
+                    <option value="14pt">14pt</option>
+                    <option value="18pt">18pt</option>
+                    <option value="24pt">24pt</option>
+                    <option value="32pt">32pt</option>
+                </select>
+                <!--17. 预览-->
+                <div id="preView" class="dib" title="Preview">
+                    <i class="icon-eye-open"></i>
+                </div>
+                <!--18. 勿扰模式-->
+                <div id="writtingMode" class="dib" title="'Ctrl+Alt+T' Toggle writting mode">
+                    <i class="icon-fullscreen"></i>
+                </div>
+            </div>
+            <textarea name="articleCon" id="articleCon" cols="30" rows="10" placeholder="文章内容"></textarea>
+            <input type="text" id="articleAuthor" placeholder="作者" maxlength="20" />
+            <input type="text" id="articleCategory" placeholder="文章分类" maxlength="20" />
+            <input type="text" id="articleLabels" placeholder="标签,多个标签用英文逗号(,)分隔" maxlength="30" />
+            <span id="save-btn">提交</span>
+        </div>
+        <div id="menu-pannel" class="p10 dn">
+            <input type="text" id="queryInp" placeholder="搜索" />
+            <span id="query-clear-btn" class="dn"><i class="icon-remove-sign"></i></span>
+            <div id="queryRes"></div>
+            <nav id="archives"></nav>
+        </div>
+        <div id="main-pannel">
+            <span id="m-nav-btn" title="'Ctrl+Alt+M' 展开菜单">
+                <i class="icon-reorder"></i>
+            </span>
+            <span id="m-edit-btn">
+                <i class="icon-edit" title="'Ctrl+Alt+E' 展开编辑"></i>
+            </span>
+            <span id="m-close-btn" class="dn" title="'Ctrl+Alt+M' 关闭菜单">
+                <i class="icon-remove"></i>
+            </span>
+            <span id="m-e-close-btn" class="dn" title="'Ctrl+Alt+E' 关闭编辑">
+                <i class="icon-remove"></i>
+            </span>
+            <!-- article template -->
+            <div id="module-article" class="m-art-div"> 
+                <div id="m-art-tit">
+                    <h2></h2>
+                </div>
+                <div id="m-art-des" class="mtb10 selectBan">
+                    <div id="m-art-des-time" class="dib">
+                        <i class="icon-time"></i>
+                        <!--<label id="m-art-des-yea">2016</label>/
+                        <label id="m-art-des-mon">2</label>/
+                        <label id="m-art-des-day">20</label>
+                        <label id="m-art-des-tim">20:20:00</label>-->
+                        <span></span>
+                    </div>
+                    <div id="m-art-des-aut" class="dib ml5">
+                        <i class="icon-user"></i>
+                        <span></span>
+                    </div>
+                    <div id="m-art-des-lab" class="dib ml5">
+                        <i class="icon-tags"></i>
+                        <span></span>
+                    </div>
+                    <div id="m-art-des-cat" class="dib ml5">
+                        <i class="icon-list-alt"></i>
+                        <span></span>
+                    </div>
+                </div>
+                <div id="m-art-con">
+                    <div id="m-art-con-abs"></div>
+                    <div id="m-art-con-nav" class="selectBan dn">
+                        <!--article nav-->
+                        <label><i class="icon-list"></i>&nbsp;文章导航</label>
+                        <ul>
+                            <!--<li>
+                                <a href="javascript:void(0);">1. 荷马史诗</a>
+                            </li>-->
+                        </ul>
+                    </div>
+                    <div id="m-art-con-con"></div>
+                    <div id="m-art-con-pag" class="selectBan" style="display:none;">
+                        <!--article pagenation-->
+                        <span title="首页"><i class="icon-double-angle-left"></i></span>
+                        <span title="上一页"><i class="icon-angle-left"></i></span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                        <span title="下一页"><i class="icon-angle-right"></i></span>
+                        <span title="尾页"><i class="icon-double-angle-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="header-pannel" class="dn">
+            <h1 class="fl">FILE SYSTEM</h1>
+            <i class="icon-reorder fr"></i>
+        </div>
+        <div id="footer-pannel" class="dn">footer-pannel</div>
+        <div id="util-pannel" class="">
+            <div id="go-top" title="返回顶部"><i class="icon-caret-up"></i></div>
+        </div>
+        <div id="mask-and-pop" class="dn">
+            <div id="login-pannel">
+                <label>XIAOBAI LEE FILE SYSTEM</label>
+                <input name="account" id="account" type="text"><span>账号</span>
+                <input name="passcode" id="passcode" type="password"><span>密码</span>
+                <a href="javascript:void(0);" id="login-btn">进入</a>
+                <span id="login-msg"></span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
