@@ -1,0 +1,30 @@
+/*positioning*/
+.pr{position: relative}
+.pf{position: fixed}
+.pab{position: absolute}
+.dn{display: none}
+.db{display: block}
+.dib{display: inline-block}
+.m5{margin: 5px}
+.m10{margin: 10px}
+.m15{margin: 15px}
+.m20{margin: 20px}
+.mtb5{margin: 5px 0}
+.mtb10{margin: 10px 0}
+.m0auto{margin: 0 auto}
+.m20auto{margin: 20px auto}
+.ml5{margin-left: 5px}
+.p5{padding: 5px}
+.p10{padding: 10px}
+.p15{padding: 15px}
+.p20{padding: 20px}
+.fr{float:right}
+.fl{float:left}
+/*禁止文本选择*/
+.selectBan{
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
